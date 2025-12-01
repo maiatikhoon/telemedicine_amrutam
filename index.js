@@ -8,6 +8,7 @@ const cors = require("cors") ;
 const morgan = require("morgan") ; 
 const routes = require("./src/routes");
 const { initPostgres } = require("./src/db/postgreSQL");
+const { errorHandler } = require("./src/utils/asyncErrorHandler");
 
 app.use(cors()) ; 
 app.use(express.json()) ; 
@@ -21,7 +22,9 @@ app.get("/" , (req , res) => {
 })
 
 
-app.use(apiVersion , routes) ; 
+app.use(apiVersion , routes) ;  
+
+app.use(errorHandler) ; 
 
 app.listen(PORT , () => { 
     console.log(`Server is listening on PORT ${PORT}`) ; 
