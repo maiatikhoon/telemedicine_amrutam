@@ -61,7 +61,7 @@ class DoctorService {
 
         const count = doctors.count;
         const totalPages = Math.ceil(count / limit);
-        const records = { ...doctors, page, totalPages }
+        const records = { ...doctors, page, totalPages , limit }
         return records;
     }
 
