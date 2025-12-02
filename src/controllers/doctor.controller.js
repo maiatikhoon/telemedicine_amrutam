@@ -1,11 +1,18 @@
 const DoctorService = require("../services/doctor.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
+const { registerDoctorSchema } = require("../validations/doctorValidations");
 
 
 module.exports.createDoctor = asyncErrorHandler(async (req, res) => {
 
     const { id: userId } = req.user;
     const { specialization, experience } = req.body;
+
+    const { error } = registerDoctorSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map(d => d.message.replace(/['"]/g, '')).join(",");
+        return res.status(200).json({ status: 400, message: message });
+    }
     const doctor = await DoctorService.createDoctor({ userId, specialization, experience });
 
     return res.status(200).json({ status: 201, data: doctor, message: "doctor created successfully" });

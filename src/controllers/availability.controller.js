@@ -1,11 +1,17 @@
 
 const AvailabilityService = require("../services/availability.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
-
+const { availabilitySlotSchema } = require("../validations/avalabilitySlotValidations");
 
 module.exports.createAvailability = asyncErrorHandler(async (req, res) => {
 
     const { doctorId, date, start_time, end_time } = req.body;
+
+    const { error } = availabilitySlotSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map(d => d.message.replace(/['"]/g, '')).join(",");
+        return res.status(200).json({ status: 400, message: message });
+    }
     const slot = await AvailabilityService.createSlot({ doctorId, date, start_time, end_time });
     return res.status(200).json({ status: 201, data: slot, message: "Slot created successfully" });
 })
