@@ -1,6 +1,6 @@
 
 module.exports.associationModels = (db) => {
-    const { User, Profile, Doctor, Consultation , AvailabilitySlot , Prescription } = db;
+    const { User, Profile, Doctor, Consultation, AvailabilitySlot, Prescription , Payment } = db;
 
     User.hasOne(Profile, { foreignKey: "user_id", onDelete: "CASCADE" });
     Profile.belongsTo(User, { foreignKey: "user_id" });
@@ -16,5 +16,8 @@ module.exports.associationModels = (db) => {
 
     Consultation.hasOne(Prescription, { foreignKey: "consultation_id" });
     Prescription.belongsTo(Consultation, { foreignKey: "consultation_id" });
+
+    Consultation.hasOne(Payment, { foreignKey: "consultation_id" });
+    Payment.belongsTo(Consultation, { foreignKey: "consultation_id" });
 
 }

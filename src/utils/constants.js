@@ -13,4 +13,11 @@ const _consultationStatus = {
     cancelled: "cancelled",
 }
 
-module.exports = { _userType , _consultationStatus  }; 
+const _paymentStatus = { 
+    pending : "pending" , 
+    success: "success",
+    failed: "failed",
+    refunded: "refunded",
+}
+
+module.exports = { _userType, _consultationStatus, _paymentStatus }; 

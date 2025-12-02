@@ -6,6 +6,7 @@ const { handlePagination } = require("../utils/handlePagination");
 const availabilityRoutes = require("./availability.route");
 const consultationRoutes = require("./consultation.routes");
 const prescriptionRoutes = require("./prescription.routes");
+const paymentRoutes = require("./payment.routes");
 
 const routes = express.Router() ; 
 
@@ -14,6 +15,7 @@ routes.use("/auth", authRoutes)  ;
 routes.use("/doctor" , doctorRoutes) ;  
 routes.use("/availablity-slot" , availabilityRoutes) ;  
 routes.use("/consultation" , consultationRoutes) ;  
-routes.use("/prescription", prescriptionRoutes) ; 
+routes.use("/prescription", prescriptionRoutes) ;  
+routes.use("/payment" , paymentRoutes) ; 
 
 module.exports = routes ; 
