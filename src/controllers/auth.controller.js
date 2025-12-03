@@ -1,3 +1,4 @@
+const AuditService = require("../services/audit.service");
 const AuthService = require("../services/auth.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
 const { registerSchema, loginSchema } = require("../validations/authValidations");
@@ -14,6 +15,7 @@ module.exports.registerUser = asyncErrorHandler(async (req, res) => {
 
     const { user, token } = await AuthService.registerUser({ email, password, role });
 
+    await AuditService.logAction({ userId: req.user.id, action: "user_registered", metadata: { userId: user.id, email: user.email } })
     return res.status(200).json({ status: 200, data: { user, token }, message: "User Registered Successfully" });
 });
 

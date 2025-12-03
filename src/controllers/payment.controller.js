@@ -1,3 +1,4 @@
+const AuditService = require("../services/audit.service");
 const PaymentService = require("../services/payment.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
 const paymentValidation = require("../validations/paymentValidation");
@@ -13,6 +14,7 @@ module.exports.createPayment = asyncErrorHandler(async (req, res) => {
 
     const record = await PaymentService.createPayment(req.body);
 
+    await AuditService.logAction({ userId: req.user.id, action: "payment_made", metadata: { paymentId: record.id, txn_id: record.txn_id, status: record.status } })
     return res.status(200).json({ status: 201, data: record, message: "Payment Done Successfully" });
 })
 
@@ -48,6 +50,8 @@ module.exports.updatePayment = asyncErrorHandler(async (req, res) => {
     const { id, status } = req.body;
 
     const record = await PaymentService.updatePayment({ id, status });
+
+    await AuditService.logAction({ userId: req.user.id, action: "payment_updated", metadata: { paymentId: record.id, status: record.status, txn_id: record.txn_id, amount: record.amount } })
     return res.status(200).json({ status: 200, data: record, message: "Payment updated successfully" });
 })
 

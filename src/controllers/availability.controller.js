@@ -1,4 +1,5 @@
 
+const AuditService = require("../services/audit.service");
 const AvailabilityService = require("../services/availability.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
 const { availabilitySlotSchema } = require("../validations/avalabilitySlotValidations");
@@ -13,6 +14,8 @@ module.exports.createAvailability = asyncErrorHandler(async (req, res) => {
         return res.status(200).json({ status: 400, message: message });
     }
     const slot = await AvailabilityService.createSlot({ doctorId, date, start_time, end_time });
+
+    await AuditService.logAction({ userId: req.user.id, action: "slot_booked", metadata: { slotId: slot.id, doctorId: slot.doctor_id } })
     return res.status(200).json({ status: 201, data: slot, message: "Slot created successfully" });
 })
 

@@ -1,3 +1,5 @@
+const { expression } = require("joi");
+const AuditService = require("../services/audit.service");
 const DoctorService = require("../services/doctor.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
 const { registerDoctorSchema } = require("../validations/doctorValidations");
@@ -15,6 +17,7 @@ module.exports.createDoctor = asyncErrorHandler(async (req, res) => {
     }
     const doctor = await DoctorService.createDoctor({ userId, specialization, experience });
 
+    await AuditService.logAction({ userId: req.user.id, action: "doctor_created", metadata: { doctorId: record.id, specialization: record.specialization, experience: record.experience } })
     return res.status(200).json({ status: 201, data: doctor, message: "doctor created successfully" });
 })
 
@@ -43,6 +46,7 @@ module.exports.updateDoctor = asyncErrorHandler(async (req, res) => {
 
     const doctor = await DoctorService.updateDoctor({ id, specialization, experience });
 
+    await AuditService.logAction({ userId: req.user.id, action: "doctor_updated", metadata: { doctorId: doctor.id, specialization: doctor.specialization, expression: record.experience } })
     return res.status(200).json({ status: 200, data: doctor, message: "Doctor updated successfully" });
 })
 

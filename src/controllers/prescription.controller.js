@@ -1,3 +1,4 @@
+const AuditService = require("../services/audit.service");
 const PrescriptionService = require("../services/prescription.service");
 const { asyncErrorHandler } = require("../utils/asyncErrorHandler");
 const { prescriptionSchema, updatePrescriptionSchema } = require("../validations/prescriptionValidation");
@@ -14,6 +15,7 @@ module.exports.createPrescription = asyncErrorHandler(async (req, res) => {
     }
 
     const data = await PrescriptionService.createPrescription({ consultationId, prescription_text });
+    await AuditService.logAction({ userId: req.user.id, action: "prescription_booked", metadata: { consultationId, issuedAt: data.issued_at } });
     return res.status(200).json({ status: 201, data, message: "Prescription created successfully" });
 })
 
