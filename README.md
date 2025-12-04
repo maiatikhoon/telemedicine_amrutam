@@ -6,29 +6,29 @@ A scalable backend service for a telemedicine platform built using Node.js, Expr
 
 This system provides a complete backend solution for a telemedicine workflow:
 
-User authentication & roles  
-Doctor onboarding & availability slots  
-Patient slot booking  
-Consultation lifecycle  
-Prescription creation  
-Payments  
-Audit logs  
-Caching with Redis for <200ms reads  
-Observability (logs)  
-Security (rate limiting, RBAC, validation)   
+- User authentication & roles  
+- Doctor onboarding & availability slots  
+- Patient slot booking  
+- Consultation lifecycle  
+- Prescription creation
+- Payments  
+- Audit logs  
+- Caching with Redis for <200ms reads  
+- Observability (logs)  
+- Security (rate limiting, RBAC, validation)   
 
 Fully documented OpenAPI schema
 
 🚀 Technology Stack  
-Component	Technology 
-Language	Node.js  
-Framework	Express.js  
-Database	PostgreSQL (Neon DB)  
-ORM	Sequelize  
-Cache	Redis (Redis Cloud) + ioredis  
-Auth	JWT + bcrypt  
-Docs	OpenAPI (Swagger)  
-Observability	Morgan  
+
+- Language&nbsp :	Node.js  
+- Framework&nbsp :	Express.js  
+- Database&nbsp :	PostgreSQL (Neon DB)  
+- ORM&nbsp :	Sequelize  
+- Cache	Redis (Redis Cloud)&nbsp : ioredis  
+- Auth&nbsp&nbsp :	JWT + bcrypt  
+- Docs&nbsp&nbsp : OpenAPI (Swagger)  
+- Observability&nbsp : Morgan  
 
 
 
@@ -43,13 +43,13 @@ npm install
 3️⃣ Create .env File  
 
 Create a .env file in the project root and fill with your environment values:  
-PORT=
-POSTGRESQL_URL=
-apiVersion=
-REDIS_HOST=
-REDIS_PORT=
-REDIS_PASSWORD=
-JWT_SECRET=
+-PORT= 
+-POSTGRESQL_URL=  
+-apiVersion=  
+-REDIS_HOST=  
+-REDIS_PORT=  
+-REDIS_PASSWORD=     
+-JWT_SECRET=  
 
 🗄 Database Setup  
 Using Sequelize Sync (Development)  
@@ -70,21 +70,21 @@ https:localhost:3000/api-docs
 
 The documentation includes:  
 
-Auth APIs  
-User & Profile  
-Doctor  
-Availability Slots  
-Consultation  
-Prescription  
-Payment  
-Audit Logs  
+-Auth APIs  
+-User & Profile  
+-Doctor  
+-Availability Slots  
+-Consultation  
+-Prescription  
+-Payment  
+-Audit Logs  
 
 🛡 Security Features  
 
-JWT-based authentication  
-Role-Based Access Control (RBAC)  
-Input validation using Joi  
-Rate limiting with express-rate-limit   
-Password hashing with bcrypt   
-Caching with Redis  
-Audit trail for every action  
+-JWT-based authentication  
+-Role-Based Access Control (RBAC)  
+-Input validation using Joi  
+-Rate limiting with express-rate-limit   
+-Password hashing with bcrypt   
+-Caching with Redis  
+-Audit trail for every action  
