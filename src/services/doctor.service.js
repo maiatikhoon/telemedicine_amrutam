@@ -1,6 +1,7 @@
 const { getDB } = require("../db/postgreSQL");
 const AppError = require("../utils/appError");
 const { Op } = require("sequelize");
+const { get, set } = require("../utils/cache");
 
 class DoctorService {
 
@@ -32,6 +33,13 @@ class DoctorService {
         const where = {};
         const profileWhere = {};
 
+        const cachedKey = `doctors${specialization}:page:${page}` 
+
+        const cached = await get(cachedKey) ; 
+        if(cached) { 
+            return cached ; 
+        }
+
         if (q) {
             profileWhere.name = { [Op.iLike]: `%${q}%` };
         }
@@ -61,7 +69,9 @@ class DoctorService {
 
         const count = doctors.count;
         const totalPages = Math.ceil(count / limit);
-        const records = { ...doctors, page, totalPages , limit }
+        const records = { ...doctors, page, totalPages, limit } 
+
+        await set(cachedKey , records) ; 
         return records;
     }
 
@@ -77,16 +87,16 @@ class DoctorService {
         return doc;
     }
 
-    static async deleteDoctor(id) { 
-        
-        const db = getDB() ; 
-        const doctor = await db.Doctor.findByPk(id) ; 
-        if(!doctor) { 
-            throw new AppError(400 , "Doctor not found") ; 
+    static async deleteDoctor(id) {
+
+        const db = getDB();
+        const doctor = await db.Doctor.findByPk(id);
+        if (!doctor) {
+            throw new AppError(400, "Doctor not found");
         }
 
-        await doctor.destroy() ;  
-        return true ; 
+        await doctor.destroy();
+        return true;
     }
 }
 
