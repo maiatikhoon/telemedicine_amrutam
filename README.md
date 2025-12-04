@@ -1,4 +1,4 @@
-Telemedicine Backend System – README
+**Telemedicine Backend System - README**
 
 A scalable backend service for a telemedicine platform built using Node.js, Express, PostgreSQL (Neon DB), Sequelize, Redis, with complete authentication, doctor availability, slot booking, consultations, prescriptions, payments, audit logs, caching, observability and security best practices.
 
@@ -43,13 +43,13 @@ npm install
 3️⃣ Create .env File  
 
 Create a .env file in the project root and fill with your environment values:  
--PORT= 
--POSTGRESQL_URL=  
--apiVersion=  
--REDIS_HOST=  
--REDIS_PORT=  
--REDIS_PASSWORD=     
--JWT_SECRET=  
+- PORT= 
+- POSTGRESQL_URL=  
+- apiVersion=  
+- REDIS_HOST=  
+- REDIS_PORT=  
+- REDIS_PASSWORD=     
+- JWT_SECRET=  
 
 🗄 Database Setup  
 Using Sequelize Sync (Development)  
@@ -70,21 +70,21 @@ https:localhost:3000/api-docs
 
 The documentation includes:  
 
--Auth APIs  
--User & Profile  
--Doctor  
--Availability Slots  
--Consultation  
--Prescription  
--Payment  
--Audit Logs  
+- Auth APIs  
+- User & Profile  
+- Doctor  
+- Availability Slots  
+- Consultation  
+- Prescription  
+- Payment  
+- Audit Logs  
 
 🛡 Security Features  
 
--JWT-based authentication  
--Role-Based Access Control (RBAC)  
--Input validation using Joi  
--Rate limiting with express-rate-limit   
--Password hashing with bcrypt   
--Caching with Redis  
--Audit trail for every action  
+- JWT-based authentication  
+- Role-Based Access Control (RBAC)  
+- Input validation using Joi  
+- Rate limiting with express-rate-limit   
+- Password hashing with bcrypt   
+- Caching with Redis  
+- Audit trail for every action  
