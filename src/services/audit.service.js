@@ -1,11 +1,16 @@
 const { getDB } = require("../db/postgreSQL");
 const AppError = require("../utils/appError");
+const { get, set, deleteAllKeys } = require("../utils/cache");
 
 
 class AuditService {
 
-    static async logAction({ userId, action, metadata = {} }) { 
-        const db = getDB() ; 
+    static async logAction({ userId, action, metadata = {} }) {
+        const db = getDB();
+
+        await deleteAllKeys(`audit:list:user:${userId}:*`);
+        await deleteAllKeys(`audit:list:user:action:${action}:*`); 
+        
         return db.AuditLog.create({
             user_id: userId,
             action,
@@ -29,6 +34,10 @@ class AuditService {
         if (filters.action) where.action = filters.action;
 
         const { page, offset, limit, order } = pagination;
+        const cachedKey = `audit:list:user:${userId}:action:${action}:page:${page}`;
+
+        const cached = await get(cachedKey);
+        if (cached) return cached;
 
         const { rows, count } = await db.AuditLog.findAndCountAll({
             where,
@@ -38,13 +47,16 @@ class AuditService {
         });
 
         const totalPages = Math.ceil(count / limit);
-        return {
+        const response = {
             logs: rows,
             total: count,
             page: page,
             limit,
             totalPages,
         };
+
+        await set(cachedKey, response);
+        return response;
     }
 }
 
