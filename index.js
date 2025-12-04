@@ -9,9 +9,9 @@ const morgan = require("morgan") ;
 const routes = require("./src/routes");
 const { initPostgres } = require("./src/db/postgreSQL");
 const { errorHandler } = require("./src/utils/asyncErrorHandler");
-const apiLimiter = require("./src/middlewares/rateLimiter"); 
 const swaggerUi = require("swagger-ui-express") ; 
 const swaggerDocument = require("./swagger-output.json") ;
+const apiLimiter = require("./src/config/rateLimiter");
 
 app.use("/api-docs" , swaggerUi.serve , require("swagger-ui-express").setup(swaggerDocument)) ;
 
@@ -19,7 +19,7 @@ app.use(cors()) ;
 app.use(express.json()) ; 
 app.use(morgan("dev")) ; 
 
-
+require("./src/config/redis") ; 
 initPostgres() ;   
 
 app.get("/" , (req , res) => { 
