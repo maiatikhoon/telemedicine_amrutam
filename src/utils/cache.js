@@ -20,4 +20,11 @@ const del = async (key) => {
     return redis.del(key);
 }
 
-module.exports = { get , set , del } ; 
+const deleteAllKeys = async (key) => {
+    const keys = await redis.keys(`${key}`);
+    for (let key of keys) {
+        await del(key);
+    }
+}
+
+module.exports = { get, set, del, deleteAllKeys }; 

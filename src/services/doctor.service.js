@@ -1,7 +1,7 @@
 const { getDB } = require("../db/postgreSQL");
 const AppError = require("../utils/appError");
 const { Op } = require("sequelize");
-const { get, set } = require("../utils/cache");
+const { get, set , deleteAllKeys, del } = require("../utils/cache");
 
 class DoctorService {
 
@@ -12,17 +12,26 @@ class DoctorService {
         if (!user) throw new Error(400, 'User not found');
 
         const newDoctor = await db.Doctor.create({ user_id: userId, specialization, experience });
+
+        await deleteAllKeys("doctor:*")
         return newDoctor;
     }
 
     static async getDoctorById(id) {
 
         const db = getDB();
+        const cachedKey = `doctor:${id}`;
+        const cached = await get(cachedKey);
+        if (cached) {
+            return cached;
+        }
 
         const doctor = await db.Doctor.findByPk(id);
         if (!doctor) {
             throw new AppError(400, "Doctor not found");
         }
+
+        await set(cachedKey, doctor);
 
         return doctor;
     }
@@ -33,11 +42,11 @@ class DoctorService {
         const where = {};
         const profileWhere = {};
 
-        const cachedKey = `doctors${specialization}:page:${page}` 
+        const cachedKey = `doctor:${specialization}:page:${page}`
 
-        const cached = await get(cachedKey) ; 
-        if(cached) { 
-            return cached ; 
+        const cached = await get(cachedKey);
+        if (cached) {
+            return cached;
         }
 
         if (q) {
@@ -69,21 +78,24 @@ class DoctorService {
 
         const count = doctors.count;
         const totalPages = Math.ceil(count / limit);
-        const records = { ...doctors, page, totalPages, limit } 
+        const records = { ...doctors, page, totalPages, limit }
 
-        await set(cachedKey , records) ; 
+        await set(cachedKey, records);
         return records;
     }
 
     static async updateDoctor({ id, specialization, experience }) {
         const db = getDB();
 
-        const doc = await Doctor.findByPk(id);
+        const doc = await db.Doctor.findByPk(id);
         if (!doc) {
             throw new AppError(400, "Doctor not found");
         }
 
         await doc.update({ specialization, experience });
+
+        await del(`doctor:${id}`) ; 
+        await deleteAllKeys('doctor:*')
         return doc;
     }
 
@@ -95,7 +107,9 @@ class DoctorService {
             throw new AppError(400, "Doctor not found");
         }
 
-        await doctor.destroy();
+        await doctor.destroy(); 
+        await del(`doctor:${id}`) ; 
+        await deleteAllKeys("doctor:*") ; 
         return true;
     }
 }

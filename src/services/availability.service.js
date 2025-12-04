@@ -2,6 +2,7 @@
 const { Op } = require('sequelize');
 const { getDB } = require('../db/postgreSQL');
 const AppError = require('../utils/appError');
+const { get, set, deleteAllKeys, del } = require('../utils/cache');
 
 class AvailabilityService {
 
@@ -41,6 +42,7 @@ class AvailabilityService {
             end_time
         });
 
+        await deleteAllKeys(`slots:doctor:${doctorId}:*`);
         return slot;
     }
 
@@ -54,6 +56,11 @@ class AvailabilityService {
 
         const { page, offset, limit, order } = pagination;
 
+        const cacheKey = `slots:doctor:${doctorId}:date:${date}:available:${availableOnly}:page:${page}`;
+
+        const cached = await get(cacheKey);
+        if (cached) return cached;
+
         const slots = await db.AvailabilitySlot.findAndCountAll({
             where,
             offset,
@@ -65,12 +72,18 @@ class AvailabilityService {
         const totalPages = Math.ceil(count / limit);
         const records = { ...slots, page, totalPages, limit };
 
+        await set(cacheKey, records);
         return records;
     }
 
     static async getSlotById(id) {
         const db = getDB();
+        const cachedKey = `slot:${id}`;
+        const cached = await get(cachedKey);
+        if (cached) return cached;
         const slot = await db.AvailabilitySlot.findByPk(id);
+
+        await set(cachedKey, slot);
         return slot;
     }
 
@@ -81,18 +94,22 @@ class AvailabilityService {
         if (slot.is_booked) throw new AppError('Slot already booked');
 
         await slot.update({ is_booked: true }, { transaction: t });
+        await del(`slot:${slot.id}`);
+        await deleteAllKeys(`slots:doctor:${slot.doctor_id}`);
         return slot;
     }
 
-    static async deleteSlot(slotId) { 
+    static async deleteSlot(slotId) {
 
-        const db = getDB() ; 
-        const slot = await db.AvailabilitySlot.findByPk(slotId) ; 
-        if(!slot) { 
-            throw new AppError(400 , "Slot not found") ; 
+        const db = getDB();
+        const slot = await db.AvailabilitySlot.findByPk(slotId);
+        if (!slot) {
+            throw new AppError(400, "Slot not found");
         }
 
-        return true ; 
+        await del(`slot:${slotId}`);
+        await deleteAllKeys(`slot:doctor:${slot.doctor_id}`);
+        return true;
     }
 }
 
